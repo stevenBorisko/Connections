@@ -1,0 +1,42 @@
+Needed repos:
+	Degub in ../
+
+Dependencies:
+	Connections.h
+Source Files:
+	Client.c
+	Server.c
+	Socket.c
+
+Full documentation on usage is found in Connections.h
+
+Macros:
+	TESP_PORT_NO:
+		- Port number on which connections may be tested.
+		- Just a convenience for testing.
+
+Structs:
+	SocketInfo:
+		- Socket Information about a host.
+	HostInfo:
+		- All information about a host.
+
+Socket Functions:
+	int Write(HostInfo* host, void* data, size_t bytes)
+		- Write data to a host.
+	int Read(HostInfo* host, void* data, size_t bytes)
+		- Read data from a host.
+	int Close(HostInfo* host)
+		- Close the connection to a host.
+
+Server Functions:
+	int Server_init(HostInfo* host, size_t clientCount, size_t portNumber)
+		- Initialize your machine as a server to allow incoming calls from
+		other machines.
+	int Server_accept(HostInfo* host, HostInfo* client)
+		- Accept an incoming call from a client on the open socket
+		specified in `host`.
+
+Client Functions:
+	int Client_connect(HostInfo* host, char* hostname, size_t portNumber)
+		- Open a connection with a server.
