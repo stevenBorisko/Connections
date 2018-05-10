@@ -1,4 +1,4 @@
-Needed repos:
+Requirements:
 	Degub in ../
 
 Dependencies:
@@ -7,11 +7,15 @@ Source Files:
 	Client.c
 	Server.c
 	Socket.c
+Makefile:
+	Connections.mk
+Object:
+	Connections.o
 
 Full documentation on usage is found in Connections.h
 
 Macros:
-	TESP_PORT_NO:
+	TEST_PORT_NO:
 		- Port number on which connections may be tested.
 		- Just a convenience for testing.
 
@@ -22,11 +26,11 @@ Structs:
 		- All information about a host.
 
 Socket Functions:
-	int Write(HostInfo* host, void* data, size_t bytes)
+	int Host_write(HostInfo* host, void* data, size_t bytes)
 		- Write data to a host.
-	int Read(HostInfo* host, void* data, size_t bytes)
+	int Host_read(HostInfo* host, void* data, size_t bytes)
 		- Read data from a host.
-	int Close(HostInfo* host)
+	int Host_close(HostInfo* host)
 		- Close the connection to a host.
 
 Server Functions:

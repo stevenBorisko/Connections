@@ -17,7 +17,7 @@
 // --- Macro Definitions ---
 //----------------------------------------------------------------------------//
 
-#define TESP_PORT_NO 10101
+#define TEST_PORT_NO 10101
 
 //----------------------------------------------------------------------------//
 // --- Structure Declarations ---
@@ -82,7 +82,7 @@ bytes (size_t)
 
 Write data to a host.
 */
-int Write(HostInfo* host, void* data, size_t bytes);
+int Host_write(HostInfo* host, void* data, size_t bytes);
 
 /*
 --- Read ---
@@ -96,7 +96,7 @@ bytes (size_t)
 
 Read data to a host.
 */
-int Read(HostInfo* host, void* data, size_t bytes);
+int Host_read(HostInfo* host, void* data, size_t bytes);
 
 /*
 --- Close ---
@@ -106,7 +106,7 @@ host (HostInfo*)
 
 Close the connection to a hast.
 */
-int Close(HostInfo* host);
+int Host_close(HostInfo* host);
 
 //----------------------------------------------------------------------------//
 // --- Server Function Declarations ---
