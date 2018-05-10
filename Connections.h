@@ -73,6 +73,13 @@ typedef struct {
 /*
 --- Write ---
 
+host (HostInfo*)
+	- Host to which data should be written
+data (void*)
+	- Buffer from which data should be read
+bytes (size_t)
+	- Number of bytes to be sent starting at `data` to `host`
+
 Write data to a host.
 */
 int Write(HostInfo* host, void* data, size_t bytes);
@@ -80,12 +87,22 @@ int Write(HostInfo* host, void* data, size_t bytes);
 /*
 --- Read ---
 
+host (HostInfo*)
+	- Host from which data should be read
+data (void*)
+	- Buffer to which data should be written
+bytes (size_t)
+	- Number of bytes to be read into `data` from `host`
+
 Read data to a host.
 */
 int Read(HostInfo* host, void* data, size_t bytes);
 
 /*
 --- Close ---
+
+host (HostInfo*)
+	- Connection to close
 
 Close the connection to a hast.
 */
@@ -98,12 +115,29 @@ int Close(HostInfo* host);
 /*
 --- Server_init ---
 
+host (HostInfo*)
+	- HostInfo struct allocated before function call.
+	- This memory will be filled upon success with information about
+	connections on your machine.
+clientCount (size_t)
+	- Number of clients to allow connection.
+	- This gets passed as a parameter to listen().
+portNumber (size_t)
+	- Port number on which connections will be accepted.
+
 Initialize your machine as a server to allow incoming calls from other machines.
 */
 int Server_init(HostInfo* host, size_t clientCount, size_t portNumber);
 
 /*
 --- Server_accept ---
+
+host (HostInfo*)
+	- HostInfo struct allocated and initialized in `Server_init`.
+client (HostInfo*)
+	- HostInfo struct allocated before function call.
+	- This memory will be filled upon success with information about
+	an accepted connection with a client.
 
 Accept an incoming call from a client on the open socket specified in `host`.
 */
@@ -115,6 +149,15 @@ int Server_accept(HostInfo* host, HostInfo* client);
 
 /*
 --- Client_connect ---
+
+host (HostInfo*)
+	- HostInfo struct allocated before function call
+	- This memory will be filled upon success with information about
+	an accepted connection with a server
+hostname (char*)
+	- Hostname of the server with which a connection will be made
+portNumber (size_t)
+	- Port number on which a connection will be made
 
 Open a connection with a server.
 */
