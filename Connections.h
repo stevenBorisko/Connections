@@ -80,6 +80,10 @@ data (void*)
 bytes (size_t)
 	- Number of bytes to be sent starting at `data` to `host`
 
+return (int)
+	-1: error
+	else: Number of bytes written
+
 Write data to a host.
 */
 int Host_write(HostInfo* host, void* data, size_t bytes);
@@ -94,6 +98,10 @@ data (void*)
 bytes (size_t)
 	- Number of bytes to be read into `data` from `host`
 
+return (int)
+	-1: Error
+	else: Number of bytes read
+
 Read data to a host.
 */
 int Host_read(HostInfo* host, void* data, size_t bytes);
@@ -103,6 +111,10 @@ int Host_read(HostInfo* host, void* data, size_t bytes);
 
 host (HostInfo*)
 	- Connection to close
+
+return (int)
+	-1: Error
+	0: Success
 
 Close the connection to a hast.
 */
@@ -125,6 +137,10 @@ clientCount (size_t)
 portNumber (size_t)
 	- Port number on which connections will be accepted.
 
+return (int)
+	0: Success
+	else: Error
+
 Initialize your machine as a server to allow incoming calls from other machines.
 */
 int Server_init(HostInfo* host, size_t clientCount, size_t portNumber);
@@ -138,6 +154,10 @@ client (HostInfo*)
 	- HostInfo struct allocated before function call.
 	- This memory will be filled upon success with information about
 	an accepted connection with a client.
+
+return (int)
+	0: Success
+	else: Error
 
 Accept an incoming call from a client on the open socket specified in `host`.
 */
@@ -158,6 +178,10 @@ hostname (char*)
 	- Hostname of the server with which a connection will be made
 portNumber (size_t)
 	- Port number on which a connection will be made
+
+return (int)
+	0: Success
+	else: Error
 
 Open a connection with a server.
 */
