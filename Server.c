@@ -77,11 +77,13 @@ int Server_select(
 	// Initialize the fd_set for select()
 
 	fd_set hosts;
-	int maxfd,tempfd;
+	int maxfd = 0,tempfd;
 
 	FD_ZERO(&hosts);
-	maxfd = host->socketInfo.fileDescriptor;
-	FD_SET(maxfd, &hosts);
+	if(host) {
+		maxfd = host->socketInfo.fileDescriptor;
+		FD_SET(maxfd, &hosts);
+	}
 	for(i = 0;i < clientCount;++i) {
 		tempfd = clients[i].socketInfo.fileDescriptor;
 		if(tempfd > maxfd) maxfd = tempfd;
@@ -90,7 +92,9 @@ int Server_select(
 
 	// select()
 
-	retval = select(maxfd+1,&hosts,NULL,NULL,timeout);
+	retval = (host || clientCount)
+		? select(maxfd+1,&hosts,NULL,NULL,timeout)
+		: select(maxfd+1,NULL,NULL,NULL,timeout);
 	code = errno;
 
 	// error
