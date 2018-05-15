@@ -64,3 +64,54 @@ int Server_accept(HostInfo* host, HostInfo* client) {
 
 	return 0;
 }
+
+int Server_select(
+	HostInfo* host,
+	HostInfo* clients,
+	size_t clientCount,
+	struct timeval* timeout
+) {
+	int retval, code;
+	size_t i;
+
+	// Initialize the fd_set for select()
+
+	fd_set hosts;
+	int maxfd,tempfd;
+
+	FD_ZERO(&hosts);
+	maxfd = host->socketInfo.fileDescriptor;
+	FD_SET(maxfd, &hosts);
+	for(i = 0;i < clientCount;++i) {
+		tempfd = clients[i].socketInfo.fileDescriptor;
+		if(tempfd > maxfd) maxfd = tempfd;
+		FD_SET(tempfd,&hosts);
+	}
+
+	// select()
+
+	retval = select(maxfd+1,&hosts,NULL,NULL,timeout);
+	code = errno;
+
+	// error
+	if(retval < 0) {
+		error("Connections Server_select - select", code);
+		return -1;
+	}
+
+	// timeout
+	if(!retval)
+		return clientCount + 1;
+
+	// incoming call
+	if(FD_ISSET(host->socketInfo.fileDescriptor, &hosts))
+		return clientCount;
+
+	// incoming data
+	for(i = 0;i < clientCount;++i)
+		if(FD_ISSET(clients[i].socketInfo.fileDescriptor,&hosts))
+			return (int)i;
+
+	error("Connections Server_select - could not find fd",0);
+	return -1;
+}

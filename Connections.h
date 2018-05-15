@@ -18,6 +18,7 @@
 //----------------------------------------------------------------------------//
 
 #define TEST_PORT_NO 10101
+#define TEST_BUFF_SIZE 128
 
 //----------------------------------------------------------------------------//
 // --- Structure Declarations ---
@@ -162,6 +163,42 @@ return (int)
 Accept an incoming call from a client on the open socket specified in `host`.
 */
 int Server_accept(HostInfo* host, HostInfo* client);
+
+/*
+--- Server_select ---
+
+host (HostInfo*)
+	- HostInfo struct allocated and initialized in `Server_init`.
+	- This function will wait on incoming calls from this listening socket.
+clients (HostInfo*)
+	- List of clients on which this function will wait for incoming data.
+clientCount (size_t)
+	- Number of elements int the list `clients`.
+timeout (struct timeval)
+	- Amount of time this function will block with no actions before
+	returning
+
+return (int)
+	-1: Error
+	0..<`clientCount`: Newest action was incoming data from a client in
+		`clients`. This value is the index of that client in the list.
+	`clientCount`: Newest action was an incoming call on `host`.
+	`clientCount` + 1: Function timed out before any action occurred.
+
+Select incoming data or connections from a set of hosts
+	- Outcomes include:
+		* Incoming data from one of the clients in `clients`
+		* Incoming connection on `host`
+		* Timeout
+	- In the case of an incoming call, `Server_accept` is not called.
+	That must be done manually after the function's return.
+*/
+int Server_select(
+	HostInfo* host,
+	HostInfo* clients,
+	size_t clientCount,
+	struct timeval* timeout
+);
 
 //----------------------------------------------------------------------------//
 // --- Client Function Declarations ---

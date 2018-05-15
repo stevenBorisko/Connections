@@ -17,7 +17,10 @@ Full documentation on usage is found in Connections.h
 Macros:
 	TEST_PORT_NO:
 		- Port number on which connections may be tested.
-		- Just a convenience for testing.
+		- Consistency convenience for testing.
+	TEST_BUFF_SIZE:
+		- Buffer size used for testing reads and writes between hosts.
+		- Consistency convenience for testing.
 
 Structs:
 	SocketInfo:
@@ -40,6 +43,13 @@ Server Functions:
 	int Server_accept(HostInfo* host, HostInfo* client)
 		- Accept an incoming call from a client on the open socket
 		specified in `host`.
+	int Server_select(
+		HostInfo* host,
+		HostInfo* clients,
+		size_t clientCount,
+		struct timeval* timeout
+	)
+		- Select incoming data or connections from a set of hosts
 
 Client Functions:
 	int Client_connect(HostInfo* host, char* hostname, size_t portNumber)
