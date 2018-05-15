@@ -56,6 +56,9 @@ socketInfo (SocketInfo)
 data (void*)
 	- User data pertaining to the host.
 	- Memory allocation and deallocation is on you.
+dataSize (size_t)
+	- Size in bytes of the memory to which `data` points.
+	- Used as a convenience for synchronization functions
 
 All information about a host.
 	- May be a server or client.
@@ -65,6 +68,7 @@ All information about a host.
 typedef struct {
 	SocketInfo socketInfo;
 	void* data;
+	size_t dataSize;
 } HostInfo;
 
 //----------------------------------------------------------------------------//
@@ -170,6 +174,7 @@ int Server_accept(HostInfo* server, HostInfo* client);
 server (HostInfo*)
 	- HostInfo struct allocated and initialized in `Server_init`.
 	- This function will wait on incoming calls from this listening socket.
+	- May be NULL if new connections are not allowed
 clients (HostInfo*)
 	- List of clients on which this function will wait for incoming data.
 clientCount (size_t)

@@ -108,12 +108,12 @@ int Server_select(
 		return clientCount + 1;
 
 	// incoming call
-	if(FD_ISSET(server->socketInfo.fileDescriptor, &hosts))
+	if(server && FD_ISSET(server->socketInfo.fileDescriptor, &hosts))
 		return clientCount;
 
 	// incoming data
 	for(i = 0;i < clientCount;++i)
-		if(FD_ISSET(clients[i].socketInfo.fileDescriptor,&hosts))
+		if(FD_ISSET(clients[i].socketInfo.fileDescriptor, &hosts))
 			return (int)i;
 
 	error("Connections Server_select - could not find fd",0);
