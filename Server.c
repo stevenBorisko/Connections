@@ -1,6 +1,6 @@
 #include "Connections.h"
 
-int Server_init(HostInfo* host, size_t clientCount, size_t portNumber) {
+int Server_init(HostInfo* server, size_t clientCount, size_t portNumber) {
 	int retval,code;
 
 	// socket()
@@ -11,18 +11,18 @@ int Server_init(HostInfo* host, size_t clientCount, size_t portNumber) {
 		error("Connections Server_init - socket", code);
 		return retval;
 	}
-	host->socketInfo.fileDescriptor = retval;
+	server->socketInfo.fileDescriptor = retval;
 
-	host->socketInfo.address.sin_family = AF_INET;
-	host->socketInfo.address.sin_addr.s_addr = INADDR_ANY;
-	host->socketInfo.address.sin_port = htons(portNumber);
+	server->socketInfo.address.sin_family = AF_INET;
+	server->socketInfo.address.sin_addr.s_addr = INADDR_ANY;
+	server->socketInfo.address.sin_port = htons(portNumber);
 
 	// bind()
 
 	retval = bind(
-		host->socketInfo.fileDescriptor,
-		(struct sockaddr*) &host->socketInfo.address,
-		sizeof(host->socketInfo.address)
+		server->socketInfo.fileDescriptor,
+		(struct sockaddr*) &server->socketInfo.address,
+		sizeof(server->socketInfo.address)
 	);
 	code = errno;
 	if(retval < 0) {
@@ -33,7 +33,7 @@ int Server_init(HostInfo* host, size_t clientCount, size_t portNumber) {
 	// listen()
 
 	retval = listen(
-		host->socketInfo.fileDescriptor,
+		server->socketInfo.fileDescriptor,
 		clientCount
 	);
 	code = errno;
@@ -45,13 +45,13 @@ int Server_init(HostInfo* host, size_t clientCount, size_t portNumber) {
 	return 0;
 }
 
-int Server_accept(HostInfo* host, HostInfo* client) {
+int Server_accept(HostInfo* server, HostInfo* client) {
 	int retval, code;
 
 	// accept()
 
 	retval = accept(
-		host->socketInfo.fileDescriptor,
+		server->socketInfo.fileDescriptor,
 		(struct sockaddr*) &client->socketInfo.address,
 		&client->socketInfo.length
 	);
@@ -66,7 +66,7 @@ int Server_accept(HostInfo* host, HostInfo* client) {
 }
 
 int Server_select(
-	HostInfo* host,
+	HostInfo* server,
 	HostInfo* clients,
 	size_t clientCount,
 	struct timeval* timeout
@@ -80,8 +80,8 @@ int Server_select(
 	int maxfd = 0,tempfd;
 
 	FD_ZERO(&hosts);
-	if(host) {
-		maxfd = host->socketInfo.fileDescriptor;
+	if(server) {
+		maxfd = server->socketInfo.fileDescriptor;
 		FD_SET(maxfd, &hosts);
 	}
 	for(i = 0;i < clientCount;++i) {
@@ -92,7 +92,7 @@ int Server_select(
 
 	// select()
 
-	retval = (host || clientCount)
+	retval = (server || clientCount)
 		? select(maxfd+1,&hosts,NULL,NULL,timeout)
 		: select(maxfd+1,NULL,NULL,NULL,timeout);
 	code = errno;
@@ -108,7 +108,7 @@ int Server_select(
 		return clientCount + 1;
 
 	// incoming call
-	if(FD_ISSET(host->socketInfo.fileDescriptor, &hosts))
+	if(FD_ISSET(server->socketInfo.fileDescriptor, &hosts))
 		return clientCount;
 
 	// incoming data

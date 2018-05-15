@@ -37,14 +37,14 @@ Socket Functions:
 		- Close the connection to a host.
 
 Server Functions:
-	int Server_init(HostInfo* host, size_t clientCount, size_t portNumber)
+	int Server_init(HostInfo* server, size_t clientCount, size_t portNumber)
 		- Initialize your machine as a server to allow incoming calls from
 		other machines.
-	int Server_accept(HostInfo* host, HostInfo* client)
+	int Server_accept(HostInfo* server, HostInfo* client)
 		- Accept an incoming call from a client on the open socket
-		specified in `host`.
+		specified in `server`.
 	int Server_select(
-		HostInfo* host,
+		HostInfo* server,
 		HostInfo* clients,
 		size_t clientCount,
 		struct timeval* timeout
@@ -52,5 +52,5 @@ Server Functions:
 		- Select incoming data or connections from a set of hosts
 
 Client Functions:
-	int Client_connect(HostInfo* host, char* hostname, size_t portNumber)
+	int Client_connect(HostInfo* server, char* hostname, size_t portNumber)
 		- Open a connection with a server.

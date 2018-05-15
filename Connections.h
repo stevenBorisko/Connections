@@ -128,7 +128,7 @@ int Host_close(HostInfo* host);
 /*
 --- Server_init ---
 
-host (HostInfo*)
+server (HostInfo*)
 	- HostInfo struct allocated before function call.
 	- This memory will be filled upon success with information about
 	connections on your machine.
@@ -144,12 +144,12 @@ return (int)
 
 Initialize your machine as a server to allow incoming calls from other machines.
 */
-int Server_init(HostInfo* host, size_t clientCount, size_t portNumber);
+int Server_init(HostInfo* server, size_t clientCount, size_t portNumber);
 
 /*
 --- Server_accept ---
 
-host (HostInfo*)
+server (HostInfo*)
 	- HostInfo struct allocated and initialized in `Server_init`.
 client (HostInfo*)
 	- HostInfo struct allocated before function call.
@@ -160,14 +160,14 @@ return (int)
 	0: Success
 	else: Error
 
-Accept an incoming call from a client on the open socket specified in `host`.
+Accept an incoming call from a client on the open socket specified in `server`.
 */
-int Server_accept(HostInfo* host, HostInfo* client);
+int Server_accept(HostInfo* server, HostInfo* client);
 
 /*
 --- Server_select ---
 
-host (HostInfo*)
+server (HostInfo*)
 	- HostInfo struct allocated and initialized in `Server_init`.
 	- This function will wait on incoming calls from this listening socket.
 clients (HostInfo*)
@@ -182,19 +182,19 @@ return (int)
 	-1: Error
 	0..<`clientCount`: Newest action was incoming data from a client in
 		`clients`. This value is the index of that client in the list.
-	`clientCount`: Newest action was an incoming call on `host`.
+	`clientCount`: Newest action was an incoming call on `server`.
 	`clientCount` + 1: Function timed out before any action occurred.
 
 Select incoming data or connections from a set of hosts
 	- Outcomes include:
 		* Incoming data from one of the clients in `clients`
-		* Incoming connection on `host`
+		* Incoming connection on `server`
 		* Timeout
 	- In the case of an incoming call, `Server_accept` is not called.
 	That must be done manually after the function's return.
 */
 int Server_select(
-	HostInfo* host,
+	HostInfo* server,
 	HostInfo* clients,
 	size_t clientCount,
 	struct timeval* timeout
@@ -207,7 +207,7 @@ int Server_select(
 /*
 --- Client_connect ---
 
-host (HostInfo*)
+server (HostInfo*)
 	- HostInfo struct allocated before function call
 	- This memory will be filled upon success with information about
 	an accepted connection with a server
@@ -222,6 +222,6 @@ return (int)
 
 Open a connection with a server.
 */
-int Client_connect(HostInfo* host, char* hostname, size_t portNumber);
+int Client_connect(HostInfo* server, char* hostname, size_t portNumber);
 
 #endif

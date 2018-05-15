@@ -1,6 +1,6 @@
 #include "Connections.h"
 
-int Client_connect(HostInfo* host, char* hostname, size_t portNumber) {
+int Client_connect(HostInfo* server, char* hostname, size_t portNumber) {
 	int retval,code;
 
 	// socket()
@@ -11,7 +11,7 @@ int Client_connect(HostInfo* host, char* hostname, size_t portNumber) {
 		error("Connections Client_connect - socket", code);
 		return retval;
 	}
-	host->socketInfo.fileDescriptor = retval;
+	server->socketInfo.fileDescriptor = retval;
 
 	// gethostbyname()
 
@@ -23,22 +23,22 @@ int Client_connect(HostInfo* host, char* hostname, size_t portNumber) {
 		return retval;
 	}
 
-	memset(&host->socketInfo.address, 0, sizeof(host->socketInfo.address));
-	host->socketInfo.address.sin_family = AF_INET;
+	memset(&server->socketInfo.address, 0, sizeof(server->socketInfo.address));
+	server->socketInfo.address.sin_family = AF_INET;
 	memmove(
-		&host->socketInfo.address.sin_addr.s_addr,
+		&server->socketInfo.address.sin_addr.s_addr,
 		server_hostent->h_addr,
 		server_hostent->h_length
 	);
-	host->socketInfo.address.sin_port = htons(portNumber);
+	server->socketInfo.address.sin_port = htons(portNumber);
 
 	// connect()
 
 	retval = socket(PF_INET, SOCK_STREAM, 0);
 	retval = connect(
-		host->socketInfo.fileDescriptor,
-		(struct sockaddr*) &host->socketInfo.address,
-		sizeof(host->socketInfo.address)
+		server->socketInfo.fileDescriptor,
+		(struct sockaddr*) &server->socketInfo.address,
+		sizeof(server->socketInfo.address)
 	);
 	code = errno;
 	if(retval < 0) {
