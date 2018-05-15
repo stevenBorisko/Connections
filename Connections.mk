@@ -12,4 +12,4 @@ $(CONNECTIONS_PATH)%.o: $(CONNECTIONS_PATH)%.c $(CONNECTIONS_PATH)Connections.h
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 ConnectionsClean:
-	rm -f $(CONNECTIONS_OBJS)
+	rm -f $(CONNECTIONS_PATH)*.o
