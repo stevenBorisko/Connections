@@ -68,10 +68,12 @@ int Server_accept(HostInfo* server, HostInfo* client) {
 int Server_select(
 	HostInfo* server,
 	HostInfo* clients,
+	int* clientStatus,
 	size_t clientCount,
 	struct timeval* timeout
 ) {
 	int retval, code;
+	int fdsFound = 0;
 	size_t i;
 
 	// Initialize the fd_set for select()
@@ -105,17 +107,22 @@ int Server_select(
 
 	// timeout
 	if(!retval)
-		return clientCount + 1;
+		return 0;
 
 	// incoming call
-	if(server && FD_ISSET(server->socketInfo.fileDescriptor, &hosts))
-		return clientCount;
+	clientStatus[clientCount] = 
+		(server && FD_ISSET(server->socketInfo.fileDescriptor, &hosts));
+	if(clientStatus[clientCount])
+		++fdsFound;
 
 	// incoming data
-	for(i = 0;i < clientCount;++i)
-		if(FD_ISSET(clients[i].socketInfo.fileDescriptor, &hosts))
-			return (int)i;
+	for(i = 0;i < clientCount;++i) {
+		clientStatus[i] = FD_ISSET(
+			clients[i].socketInfo.fileDescriptor,
+			&hosts
+		);
+		if(clientStatus[i]) ++fdsFound;
+	}
 
-	error("Connections Server_select - could not find fd",0);
-	return -1;
+	return fdsFound;
 }

@@ -46,6 +46,7 @@ Server Functions:
 	int Server_select(
 		HostInfo* server,
 		HostInfo* clients,
+		int* slientStatus,
 		size_t clientCount,
 		struct timeval* timeout
 	)

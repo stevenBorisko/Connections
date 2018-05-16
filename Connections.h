@@ -177,6 +177,13 @@ server (HostInfo*)
 	- May be NULL if new connections are not allowed
 clients (HostInfo*)
 	- List of clients on which this function will wait for incoming data.
+	- Length: `clientCount`
+clientStatus (int*)
+	- List of integers allocated before function call.
+	- Length: `clientCount` + 1
+	- Upon return, this list will be populated with whether reads from the
+	file descriptor of each client is non blocking (index `clientCount` is
+	for if `server` has an incoming call)
 clientCount (size_t)
 	- Number of elements int the list `clients`.
 timeout (struct timeval)
@@ -185,10 +192,9 @@ timeout (struct timeval)
 
 return (int)
 	-1: Error
-	0..<`clientCount`: Newest action was incoming data from a client in
-		`clients`. This value is the index of that client in the list.
-	`clientCount`: Newest action was an incoming call on `server`.
-	`clientCount` + 1: Function timed out before any action occurred.
+	0: timeout
+	else: Number of non-blocking file descriptors found
+		(`clientStatus` populated)
 
 Select incoming data or connections from a set of hosts
 	- Outcomes include:
@@ -201,6 +207,7 @@ Select incoming data or connections from a set of hosts
 int Server_select(
 	HostInfo* server,
 	HostInfo* clients,
+	int* clientStatus,
 	size_t clientCount,
 	struct timeval* timeout
 );
