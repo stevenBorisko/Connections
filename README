@@ -3,6 +3,7 @@ Requirements:
 
 Dependencies:
 	Connections.h
+	../Degub/Degub.h
 Source Files:
 	Client.c
 	Server.c
